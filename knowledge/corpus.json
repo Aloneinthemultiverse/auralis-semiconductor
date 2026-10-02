@@ -2,7 +2,7 @@
   "namespace": "semiconductor-corpus",
   "title": "Auralis Semiconductor Research Corpus",
   "domain": "semiconductor and digital hardware design: computer architecture, microarchitecture, RTL design and verification, VLSI and CMOS circuits, low-power design, EDA, memory systems, accelerators, interconnects",
-  "relevanceQuestion": "Is this work about semiconductor or digital hardware design (chips, processors, accelerators, RTL/HDL, VLSI/CMOS circuits, EDA, hardware verification, memory or interconnect hardware)?",
+  "relevanceQuestion": "Is this about chip or hardware design?",
   "sources": {
     "arxiv": {
       "categories": [
