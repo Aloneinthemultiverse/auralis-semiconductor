@@ -1,6 +1,6 @@
 {
   "name": "auralis-semiconductor",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AI semiconductor engineering on Auralis: research-backed architecture, SystemVerilog RTL, automated Verilator/Icarus/Yosys verification, Laya-controlled refinement loop.",
   "author": { "name": "Sujit Narrayan M" },
   "keywords": ["semiconductor", "rtl", "systemverilog", "verilator", "yosys", "eda", "auralis"]

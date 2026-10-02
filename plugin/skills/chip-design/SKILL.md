@@ -18,6 +18,11 @@ instead of improvising a design from memory.
 
 ## Workflow
 
+For any new or non-trivial chip, follow the `deep-research-workflow` skill (Auralis
+plugin): `problem_start` with the full statement → parts with sources per part → study
+the notebook (`notebook_studio` design_brief, `notebook_ask`) → `problem_design`. The
+steps below are the details for the design stage and for quick, small blocks.
+
 1. **Requirements first.** Restate the purpose as requirements: function, interfaces/ports,
    clock target, throughput/latency, area and power budget, reset scheme, technology
    assumptions, verification expectations. If something that changes the architecture is

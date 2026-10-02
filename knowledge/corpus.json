@@ -4,19 +4,47 @@
   "domain": "semiconductor and digital hardware design: computer architecture, microarchitecture, RTL design and verification, VLSI and CMOS circuits, low-power design, EDA, memory systems, accelerators, interconnects",
   "relevanceQuestion": "Is this work about semiconductor or digital hardware design (chips, processors, accelerators, RTL/HDL, VLSI/CMOS circuits, EDA, hardware verification, memory or interconnect hardware)?",
   "sources": {
-    "arxiv": { "categories": ["cs.AR", "cs.ET", "eess.SY"], "perTopic": 25 },
-    "openalex": { "perTopic": 25 },
-    "oapen": { "perTopic": 10 }
+    "arxiv": {
+      "categories": [
+        "cs.AR",
+        "cs.ET",
+        "eess.SY",
+        "cs.LG",
+        "cs.AI"
+      ],
+      "perTopic": 60
+    },
+    "openalex": {
+      "perTopic": 40
+    }
   },
-  "keepPerTopic": 30,
+  "keepPerTopic": 60,
   "deepResearch": {
     "enabled": true,
-    "mode": "LOCAL",
+    "mode": "KAGGLE",
     "minKeptToSkip": 8,
-    "allowedHosts": ["arxiv.org", "library.oapen.org", "directory.doabooks.org", "openstax.org",
-      "libretexts.org", "wikibooks.org", "github.com", "githubusercontent.com", "ibiblio.org",
-      "archive.org", ".edu", "riscv.org", "chipsalliance.org", "openroad.tools",
-      "readthedocs.io", "yosyshq.net", "verilator.org", "zenodo.org", "hal.science", "osti.gov"]
+    "allowedHosts": [
+      "arxiv.org",
+      "library.oapen.org",
+      "directory.doabooks.org",
+      "openstax.org",
+      "libretexts.org",
+      "wikibooks.org",
+      "github.com",
+      "githubusercontent.com",
+      "ibiblio.org",
+      "archive.org",
+      ".edu",
+      "riscv.org",
+      "chipsalliance.org",
+      "openroad.tools",
+      "readthedocs.io",
+      "yosyshq.net",
+      "verilator.org",
+      "zenodo.org",
+      "hal.science",
+      "osti.gov"
+    ]
   },
   "topics": [
     "RISC-V processor microarchitecture",
@@ -48,6 +76,222 @@
     "hardware security side channel countermeasures",
     "fault tolerance soft error mitigation in digital circuits",
     "open-source silicon OpenROAD SkyWater PDK tapeout",
-    "chiplet and 3D integrated circuit design"
-  ]
+    "chiplet and 3D integrated circuit design",
+    "large language models for hardware design RTL generation",
+    "LLM agents for chip design automation",
+    "machine learning for placement and routing",
+    "reinforcement learning chip floorplanning",
+    "graph neural networks for EDA timing and congestion prediction",
+    "AI-driven design space exploration of hardware architectures",
+    "LLM-assisted hardware verification and assertion generation",
+    "hardware bug localization and repair with machine learning",
+    "benchmarks for LLM Verilog generation VerilogEval RTLLM",
+    "neural architecture and hardware co-design",
+    "transformer accelerator hardware architecture",
+    "LLM inference accelerator memory bandwidth",
+    "sparse neural network accelerator design",
+    "quantized and low-precision arithmetic hardware",
+    "dataflow architecture for deep learning accelerators",
+    "GPU microarchitecture design",
+    "tensor processing unit TPU architecture",
+    "neuromorphic computing hardware",
+    "analog in-memory computing for neural networks",
+    "compute-in-memory SRAM macro design",
+    "photonic computing hardware for AI",
+    "edge AI accelerator low power design",
+    "vector processor RISC-V vector extension implementation",
+    "multicore processor and manycore architecture",
+    "hardware prefetching techniques",
+    "memory consistency models hardware implementation",
+    "virtual memory TLB and MMU design",
+    "interrupt controller and system-on-chip integration",
+    "SoC architecture and IP integration",
+    "high-bandwidth memory HBM interfaces",
+    "CXL and PCIe interconnect hardware",
+    "on-chip power management and voltage regulation",
+    "clock domain crossing and synchronizer design",
+    "design for testability scan chains BIST",
+    "post-silicon validation and debug",
+    "hardware Trojans detection",
+    "approximate computing hardware",
+    "arithmetic circuits adders multipliers design",
+    "floating point unit design",
+    "cryptographic hardware accelerator design",
+    "open-source hardware RISC-V cores evaluation",
+    "Chisel hardware construction language agile hardware design",
+    "electronic design automation open-source tools",
+    "semiconductor process technology scaling FinFET GAA",
+    "power performance area PPA optimization"
+  ],
+  "repos": [
+    {
+      "repo": "lowRISC/opentitan",
+      "description": "open silicon root of trust SoC",
+      "maxDocs": 120,
+      "maxRtl": 30
+    },
+    {
+      "repo": "lowRISC/ibex",
+      "description": "small 32-bit RISC-V core",
+      "maxDocs": 60,
+      "maxRtl": 25
+    },
+    {
+      "repo": "openhwgroup/cva6",
+      "description": "6-stage 64-bit application-class RISC-V core",
+      "maxDocs": 60,
+      "maxRtl": 30
+    },
+    {
+      "repo": "openhwgroup/cv32e40p",
+      "description": "4-stage 32-bit RISC-V core with DSP extensions",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "openhwgroup/core-v-verif",
+      "description": "UVM verification environments for CORE-V cores",
+      "maxDocs": 60,
+      "maxRtl": 10
+    },
+    {
+      "repo": "chipsalliance/rocket-chip",
+      "description": "Rocket chip generator (Chisel)",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "riscv-boom/riscv-boom",
+      "description": "out-of-order RISC-V core (Chisel)",
+      "maxDocs": 40,
+      "maxRtl": 25
+    },
+    {
+      "repo": "OpenXiangShan/XiangShan",
+      "description": "high-performance out-of-order RISC-V processor",
+      "maxDocs": 40,
+      "maxRtl": 25
+    },
+    {
+      "repo": "ucb-bar/chipyard",
+      "description": "agile SoC design framework",
+      "maxDocs": 80,
+      "maxRtl": 10
+    },
+    {
+      "repo": "ucb-bar/gemmini",
+      "description": "systolic-array DNN accelerator generator",
+      "maxDocs": 30,
+      "maxRtl": 20
+    },
+    {
+      "repo": "nvdla/hw",
+      "description": "NVIDIA deep learning accelerator RTL",
+      "maxDocs": 40,
+      "maxRtl": 25
+    },
+    {
+      "repo": "PrincetonUniversity/openpiton",
+      "description": "manycore research processor framework",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "black-parrot/black-parrot",
+      "description": "Linux-capable RISC-V multicore",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "YosysHQ/picorv32",
+      "description": "size-optimized RISC-V CPU",
+      "maxDocs": 10,
+      "maxRtl": 10
+    },
+    {
+      "repo": "SpinalHDL/VexRiscv",
+      "description": "FPGA-friendly RISC-V CPU (SpinalHDL)",
+      "maxDocs": 20,
+      "maxRtl": 15
+    },
+    {
+      "repo": "olofk/serv",
+      "description": "bit-serial RISC-V CPU",
+      "maxDocs": 20,
+      "maxRtl": 15
+    },
+    {
+      "repo": "pulp-platform/snitch_cluster",
+      "description": "energy-efficient RISC-V compute cluster",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "pulp-platform/axi",
+      "description": "AXI4 on-chip interconnect IP",
+      "maxDocs": 20,
+      "maxRtl": 25
+    },
+    {
+      "repo": "chipsalliance/caliptra-rtl",
+      "description": "silicon root of trust RTL",
+      "maxDocs": 40,
+      "maxRtl": 20
+    },
+    {
+      "repo": "The-OpenROAD-Project/OpenROAD",
+      "description": "open RTL-to-GDS physical design",
+      "maxDocs": 120,
+      "maxRtl": 0
+    },
+    {
+      "repo": "efabless/openlane2",
+      "description": "open ASIC flow",
+      "maxDocs": 80,
+      "maxRtl": 0
+    },
+    {
+      "repo": "google/skywater-pdk",
+      "description": "open 130nm process design kit docs",
+      "maxDocs": 80,
+      "maxRtl": 0
+    },
+    {
+      "repo": "efabless/caravel",
+      "description": "open MPW harness SoC",
+      "maxDocs": 30,
+      "maxRtl": 15
+    },
+    {
+      "repo": "YosysHQ/yosys",
+      "description": "open synthesis suite",
+      "maxDocs": 60,
+      "maxRtl": 0
+    }
+  ],
+  "harvest": {
+    "arxiv": [
+      {
+        "category": "cs.AR",
+        "max": 8000
+      },
+      {
+        "category": "cs.ET",
+        "max": 2000
+      }
+    ],
+    "berkeley": {
+      "fromYear": 2000,
+      "toYear": 2025
+    },
+    "internetArchive": [
+      "subject:(\"computer architecture\" OR microprocessors OR \"microprocessor design\" OR microcomputers)",
+      "subject:(VLSI OR \"integrated circuits\" OR \"integrated circuit design\" OR semiconductors OR transistors)",
+      "subject:(\"digital electronics\" OR \"digital circuits\" OR \"logic design\" OR \"switching theory\" OR \"logic circuits\")",
+      "subject:(\"computer engineering\" OR \"electronic design automation\" OR FPGA OR \"hardware description language\" OR Verilog OR VHDL)",
+      "title:(WikiChip) OR subject:(datasheet AND (microprocessor OR VLSI))"
+    ],
+    "internetArchivePages": 3
+  },
+  "reposFirst": true
 }
