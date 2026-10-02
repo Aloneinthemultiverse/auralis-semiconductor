@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "auralis-semiconductor": {
+      "type": "http",
+      "url": "${AURALIS_SEMI_MCP_URL:-http://localhost:8090/mcp}"
+    }
+  }
+}

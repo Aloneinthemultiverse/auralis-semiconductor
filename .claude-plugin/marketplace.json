@@ -1,0 +1,12 @@
+{
+  "name": "auralis-semiconductor",
+  "owner": { "name": "Sujit Narrayan M" },
+  "metadata": { "description": "Auralis AI semiconductor design plugin." },
+  "plugins": [
+    {
+      "name": "auralis-semiconductor",
+      "source": "./plugin",
+      "description": "AI semiconductor engineering scientist: research, architecture, RTL, verification, refinement."
+    }
+  ]
+}

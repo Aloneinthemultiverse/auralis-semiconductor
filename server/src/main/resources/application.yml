@@ -1,0 +1,28 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: auralis-semiconductor
+  threads:
+    virtual:
+      enabled: true
+  ai:
+    mcp:
+      server:
+        name: auralis-semiconductor
+        version: 0.1.0
+        protocol: STREAMABLE
+        instructions: >
+          Semiconductor design domain for Auralis: design guidance for synthesizable
+          SystemVerilog, automated validation (Verilator lint, Icarus simulation, Yosys
+          synthesis) and the individual EDA tools.
+        streamable-http:
+          mcp-endpoint: /mcp
+semiconductor:
+  eda-image: auralis-eda
+  timeout: 180s
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

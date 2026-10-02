@@ -1,0 +1,5 @@
+server/target/
+knowledge/cache/
+*.log
+.idea/
+.vscode/

@@ -1,0 +1,53 @@
+{
+  "namespace": "semiconductor-corpus",
+  "title": "Auralis Semiconductor Research Corpus",
+  "domain": "semiconductor and digital hardware design: computer architecture, microarchitecture, RTL design and verification, VLSI and CMOS circuits, low-power design, EDA, memory systems, accelerators, interconnects",
+  "relevanceQuestion": "Is this work about semiconductor or digital hardware design (chips, processors, accelerators, RTL/HDL, VLSI/CMOS circuits, EDA, hardware verification, memory or interconnect hardware)?",
+  "sources": {
+    "arxiv": { "categories": ["cs.AR", "cs.ET", "eess.SY"], "perTopic": 25 },
+    "openalex": { "perTopic": 25 },
+    "oapen": { "perTopic": 10 }
+  },
+  "keepPerTopic": 30,
+  "deepResearch": {
+    "enabled": true,
+    "mode": "LOCAL",
+    "minKeptToSkip": 8,
+    "allowedHosts": ["arxiv.org", "library.oapen.org", "directory.doabooks.org", "openstax.org",
+      "libretexts.org", "wikibooks.org", "github.com", "githubusercontent.com", "ibiblio.org",
+      "archive.org", ".edu", "riscv.org", "chipsalliance.org", "openroad.tools",
+      "readthedocs.io", "yosyshq.net", "verilator.org", "zenodo.org", "hal.science", "osti.gov"]
+  },
+  "topics": [
+    "RISC-V processor microarchitecture",
+    "in-order pipelined processor design hazards forwarding",
+    "out-of-order superscalar processor design",
+    "branch prediction hardware",
+    "cache memory hierarchy design",
+    "cache coherence protocols hardware",
+    "network-on-chip interconnect design",
+    "AMBA AXI bus interconnect",
+    "DNN accelerator architecture systolic array",
+    "hardware accelerator design for machine learning inference",
+    "SystemVerilog RTL design methodology",
+    "high-level synthesis HLS hardware design",
+    "hardware verification UVM constrained random",
+    "formal verification of hardware RTL",
+    "LLM generated Verilog RTL code generation",
+    "machine learning for EDA electronic design automation",
+    "logic synthesis optimization",
+    "physical design placement and routing",
+    "static timing analysis",
+    "low power digital design clock gating power gating",
+    "dynamic voltage and frequency scaling hardware",
+    "SRAM design and leakage reduction",
+    "DRAM memory controller design",
+    "processing in memory near-memory computing",
+    "FPGA architecture and design",
+    "asynchronous circuit design",
+    "hardware security side channel countermeasures",
+    "fault tolerance soft error mitigation in digital circuits",
+    "open-source silicon OpenROAD SkyWater PDK tapeout",
+    "chiplet and 3D integrated circuit design"
+  ]
+}

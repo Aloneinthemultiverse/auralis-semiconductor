@@ -1,0 +1,107 @@
+{
+  "namespace": "semiconductor-library",
+  "title": "Auralis Semiconductor Library",
+  "note": "Only legally free sources: open licenses or free distribution by the author/publisher. Paid books are listed under 'wanted' for the user to add copies they own.",
+  "books": [
+    {
+      "id": "riscv-isa-manual",
+      "title": "The RISC-V Instruction Set Manual (Unprivileged + Privileged)",
+      "authors": "RISC-V International",
+      "category": "ISA and standards",
+      "license": "CC BY 4.0",
+      "sourceType": "standard",
+      "parts": [
+        { "title": "Full specification", "url": "https://github.com/riscv/riscv-isa-manual/releases/download/riscv-isa-release-973b0a8-2026-10-02/riscv-spec.pdf" }
+      ]
+    },
+    {
+      "id": "microprocessor-design",
+      "title": "Microprocessor Design (Wikibooks)",
+      "authors": "Wikibooks contributors",
+      "category": "Computer architecture and microarchitecture",
+      "license": "CC BY-SA 3.0",
+      "sourceType": "book",
+      "parts": [
+        { "title": "Print version", "url": "https://www.kth.se/social/upload/62/microprocessor_design.pdf" }
+      ]
+    },
+    {
+      "id": "codf",
+      "title": "Computer Organization and Design Fundamentals",
+      "authors": "David Tarnoff",
+      "category": "Computer architecture and microarchitecture",
+      "license": "Free distribution by the author",
+      "sourceType": "book",
+      "parts": [
+        { "title": "Chapter 1 - Digital Signals and Systems", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch1_v02.pdf" },
+        { "title": "Chapter 2 - Numbering Systems", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch2_v02.pdf" },
+        { "title": "Chapter 3 - Binary Math and Signed Representations", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch3_v02.pdf" },
+        { "title": "Chapter 4 - Logic Functions and Gates", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch4_v02.pdf" },
+        { "title": "Chapter 5 - Boolean Algebra", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch5_v02.pdf" },
+        { "title": "Chapter 6 - Standard Boolean Expression Formats", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch6_v02.pdf" },
+        { "title": "Chapter 7 - Karnaugh Maps", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch7_v02.pdf" },
+        { "title": "Chapter 8 - Combinational Logic Applications", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch8_v02.pdf" },
+        { "title": "Chapter 9 - Binary Operation Applications", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch9_v02.pdf" },
+        { "title": "Chapter 10 - Memory Cells", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch10_v02.pdf" },
+        { "title": "Chapter 11 - State Machines", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch11_v02.pdf" },
+        { "title": "Chapter 12 - Memory Organization", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch12_v02.pdf" },
+        { "title": "Chapter 13 - Memory Hierarchy", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch13_v02.pdf" },
+        { "title": "Chapter 14 - Serial Protocol Basics", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch14_v02.pdf" },
+        { "title": "Chapter 15 - Introduction to Processor Architecture", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch15_v02.pdf" },
+        { "title": "Chapter 16 - Intel 80x86 Base Architecture", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch16_v02.pdf" },
+        { "title": "Chapter 17 - Intel 80x86 Assembly Language", "url": "https://faculty.etsu.edu/tarnoff/ntes2150/Ch17_v02.pdf" }
+      ]
+    },
+    {
+      "id": "liec-digital",
+      "title": "Lessons In Electric Circuits, Volume IV - Digital",
+      "authors": "Tony R. Kuphaldt",
+      "category": "Digital design fundamentals",
+      "license": "Design Science License",
+      "sourceType": "book",
+      "parts": [
+        { "title": "Full book", "url": "https://www.ibiblio.org/kuphaldt/electricCircuits/Digital/DIGI.pdf" }
+      ]
+    },
+    {
+      "id": "free-range-vhdl",
+      "title": "Free Range VHDL (2019 edition)",
+      "authors": "Fabrizio Tappero, Bryan Mealy",
+      "category": "Hardware description languages",
+      "license": "CC BY-SA 4.0",
+      "sourceType": "book",
+      "parts": [
+        { "title": "Full book", "url": "https://archive.org/download/free_range_vhdl_2019/free_range_vhdl_2019.pdf" }
+      ]
+    },
+    {
+      "id": "verilator-manual",
+      "title": "Verilator Manual",
+      "authors": "Wilson Snyder and Verilator contributors",
+      "category": "EDA tools",
+      "license": "LGPL-3.0 / Artistic-2.0",
+      "sourceType": "manual",
+      "parts": [
+        { "title": "Full manual", "url": "https://verilator.org/verilator_doc.pdf" }
+      ]
+    },
+    {
+      "id": "yosys-manual",
+      "title": "Yosys Open SYnthesis Suite Manual",
+      "authors": "YosysHQ",
+      "category": "EDA tools",
+      "license": "ISC",
+      "sourceType": "manual",
+      "parts": [
+        { "title": "Full manual", "url": "https://yosyshq.readthedocs.io/_/downloads/yosys/en/latest/pdf/" }
+      ]
+    }
+  ],
+  "wanted": [
+    { "title": "Digital Design and Computer Architecture, RISC-V Edition", "authors": "Harris & Harris", "why": "standard RTL + RISC-V microarchitecture text" },
+    { "title": "CMOS VLSI Design: A Circuits and Systems Perspective", "authors": "Weste & Harris", "why": "circuits, power, timing, layout" },
+    { "title": "Computer Architecture: A Quantitative Approach", "authors": "Hennessy & Patterson", "why": "pipelines, caches, performance trade-offs" },
+    { "title": "RTL Modeling with SystemVerilog for Simulation and Synthesis", "authors": "Stuart Sutherland", "why": "synthesizable SystemVerilog style" },
+    { "title": "Low Power Methodology Manual", "authors": "Keating et al.", "why": "power gating, clock gating, multi-voltage" }
+  ]
+}
