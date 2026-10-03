@@ -1,0 +1,26 @@
+Top module: rst_sync
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_safety.sv (Icarus) ==
+27 checks, 0 failures
+ALL TESTS PASSED
+tb_safety.sv:86: $finish called at 6801 (1s)
+
+== synthesize (Yosys) ==
+5. Printing statistics.
+
+=== rst_sync ===
+
+   Number of wires:                  4
+   Number of wire bits:              4
+   Number of public wires:           4
+   Number of public wire bits:       4
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  2
+     $_DFF_PN0_                      2
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_safety.sv passed], synthesis=ok, cells=2, OVERALL PASS

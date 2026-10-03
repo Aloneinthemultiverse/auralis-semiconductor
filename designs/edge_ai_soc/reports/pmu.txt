@@ -1,0 +1,29 @@
+Top module: icg
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_pmu.sv (Icarus) ==
+pmu.sv:96: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+20 checks, 0 failures
+ALL TESTS PASSED
+tb_pmu.sv:98: $finish called at 3650 (1s)
+
+== synthesize (Yosys) ==
+4. Printing statistics.
+
+=== icg ===
+
+   Number of wires:                  6
+   Number of wire bits:              6
+   Number of public wires:           5
+   Number of public wire bits:       5
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                  3
+     $_AND_                          1
+     $_DLATCH_N_                     1
+     $_OR_                           1
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_pmu.sv passed], synthesis=ok, cells=3, OVERALL PASS

@@ -1,0 +1,12 @@
+Top module: soc_top
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_soc_top.sv (Icarus) ==
+timed out after 180s
+
+== synthesize (Yosys) ==
+timed out after 180s
+
+SUMMARY: lint=clean, simulation=0/1 passed [tb_soc_top.sv FAILED], synthesis=FAILED, cells=?, OVERALL FAIL

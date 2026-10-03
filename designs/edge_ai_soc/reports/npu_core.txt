@@ -1,0 +1,142 @@
+Top module: npu_core
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_npu_core.sv (Icarus) ==
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_core.sv:38: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+479 checks, 0 failures
+ALL TESTS PASSED
+tb_npu_core.sv:91: $finish called at 11731 (1s)
+
+== synthesize (Yosys) ==
+6. Printing statistics.
+
+=== $paramod$0b25315de3d3dbccb213b5b70abcf7907ed99dd2\npu_array ===
+
+   Number of wires:                 41
+   Number of wire bits:           2280
+   Number of public wires:          40
+   Number of public wire bits:    2279
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                369
+     $_ANDNOT_                       1
+     $_SDFFE_PN0P_                 352
+     npu_pe                         16
+
+=== npu_core ===
+
+   Number of wires:             105203
+   Number of wire bits:         165266
+   Number of public wires:         831
+   Number of public wire bits:   60085
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             162994
+     $_ANDNOT_                   17848
+     $_AND_                       1671
+     $_DFFE_PP_                  57344
+     $_DFF_P_                      228
+     $_MUX_                      60064
+     $_NAND_                      1785
+     $_NOR_                       1905
+     $_NOT_                       1201
+     $_ORNOT_                     1569
+     $_OR_                        5841
+     $_SDFFE_PN0P_                 630
+     $_SDFFE_PN1P_                   4
+     $_SDFFE_PP0P_                  32
+     $_SDFF_PN0_                    85
+     $_XNOR_                      3817
+     $_XOR_                       8969
+     $paramod$0b25315de3d3dbccb213b5b70abcf7907ed99dd2\npu_array      1
+
+=== npu_pe ===
+
+   Number of wires:               1356
+   Number of wire bits:           1608
+   Number of public wires:          17
+   Number of public wire bits:     207
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               1465
+     $_ANDNOT_                     424
+     $_AND_                         69
+     $_MUX_                         48
+     $_NAND_                        67
+     $_NOR_                        107
+     $_NOT_                         27
+     $_ORNOT_                       45
+     $_OR_                         184
+     $_SDFFE_PN0P_                  96
+     $_XNOR_                       106
+     $_XOR_                        292
+
+=== design hierarchy ===
+
+   npu_core                          1
+     $paramod$0b25315de3d3dbccb213b5b70abcf7907ed99dd2\npu_array      1
+       npu_pe                       16
+
+   Number of wires:             126940
+   Number of wire bits:         193274
+   Number of public wires:        1143
+   Number of public wire bits:   65676
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             186786
+     $_ANDNOT_                   24633
+     $_AND_                       2775
+     $_DFFE_PP_                  57344
+     $_DFF_P_                      228
+     $_MUX_                      60832
+     $_NAND_                      2857
+     $_NOR_                       3617
+     $_NOT_                       1633
+     $_ORNOT_                     2289
+     $_OR_                        8785
+     $_SDFFE_PN0P_                2518
+     $_SDFFE_PN1P_                   4
+     $_SDFFE_PP0P_                  32
+     $_SDFF_PN0_                    85
+     $_XNOR_                      5513
+     $_XOR_                      13641
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_npu_core.sv passed], synthesis=ok, cells=369, OVERALL PASS

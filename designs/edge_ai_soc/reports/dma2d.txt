@@ -1,0 +1,39 @@
+Top module: iopmp
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_dma2d.sv (Icarus) ==
+iopmp.sv:48: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+iopmp.sv:48: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+240 checks, 0 failures
+ALL TESTS PASSED
+tb_dma2d.sv:99: $finish called at 19721 (1s)
+
+== synthesize (Yosys) ==
+5. Printing statistics.
+
+=== iopmp ===
+
+   Number of wires:               4101
+   Number of wire bits:           5056
+   Number of public wires:          31
+   Number of public wire bits:     986
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               4749
+     $_ANDNOT_                    1469
+     $_AND_                         59
+     $_MUX_                        779
+     $_NAND_                        58
+     $_NOR_                         61
+     $_NOT_                        435
+     $_ORNOT_                      421
+     $_OR_                         384
+     $_SDFFE_PN0P_                 578
+     $_SDFF_PN0_                     1
+     $_XNOR_                       136
+     $_XOR_                        368
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_dma2d.sv passed], synthesis=ok, cells=4749, OVERALL PASS

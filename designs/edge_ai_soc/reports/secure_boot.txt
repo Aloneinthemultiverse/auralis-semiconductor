@@ -1,0 +1,105 @@
+Top module: secure_boot
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_secure_boot.sv (Icarus) ==
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+sha256.sv:46: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+61 checks, 0 failures
+ALL TESTS PASSED
+tb_secure_boot.sv:167: $finish called at 38360 (1s)
+
+== synthesize (Yosys) ==
+5. Printing statistics.
+
+=== secure_boot ===
+
+   Number of wires:               2332
+   Number of wire bits:           4049
+   Number of public wires:          29
+   Number of public wire bits:    1651
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               3043
+     $_ANDNOT_                     428
+     $_AND_                        510
+     $_DFF_P_                        6
+     $_MUX_                        100
+     $_NAND_                        68
+     $_NOR_                         67
+     $_NOT_                         79
+     $_ORNOT_                       93
+     $_OR_                         489
+     $_SDFFE_PN0P_                 644
+     $_SDFFE_PN1P_                   1
+     $_SDFF_PN0_                     1
+     $_XNOR_                        66
+     $_XOR_                        490
+     sha256                          1
+
+=== sha256 ===
+
+   Number of wires:               6268
+   Number of wire bits:           8695
+   Number of public wires:          31
+   Number of public wire bits:    2386
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               7335
+     $_ANDNOT_                    1141
+     $_AND_                        166
+     $_DFF_P_                       32
+     $_MUX_                       1395
+     $_NAND_                       233
+     $_NOR_                        699
+     $_NOT_                        208
+     $_ORNOT_                       82
+     $_OR_                         775
+     $_SDFFE_PN0P_                 888
+     $_SDFFE_PN1P_                 136
+     $_SDFFE_PP0P_                   6
+     $_SDFF_PN0_                     1
+     $_SDFF_PP0_                     1
+     $_XNOR_                       691
+     $_XOR_                        881
+
+=== design hierarchy ===
+
+   secure_boot                       1
+     sha256                          1
+
+   Number of wires:               8600
+   Number of wire bits:          12744
+   Number of public wires:          60
+   Number of public wire bits:    4037
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:              10377
+     $_ANDNOT_                    1569
+     $_AND_                        676
+     $_DFF_P_                       38
+     $_MUX_                       1495
+     $_NAND_                       301
+     $_NOR_                        766
+     $_NOT_                        287
+     $_ORNOT_                      175
+     $_OR_                        1264
+     $_SDFFE_PN0P_                1532
+     $_SDFFE_PN1P_                 137
+     $_SDFFE_PP0P_                   6
+     $_SDFF_PN0_                     2
+     $_SDFF_PP0_                     1
+     $_XNOR_                       757
+     $_XOR_                       1371
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_secure_boot.sv passed], synthesis=ok, cells=3043, OVERALL PASS

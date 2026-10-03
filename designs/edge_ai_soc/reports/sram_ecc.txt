@@ -1,0 +1,101 @@
+Top module: sram_ecc
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_sram_ecc.sv (Icarus) ==
+secded.sv:7: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+1388 checks, 0 failures
+ALL TESTS PASSED
+tb_sram_ecc.sv:64: $finish called at 14540 (1s)
+
+== synthesize (Yosys) ==
+5. Printing statistics.
+
+=== secded_dec ===
+
+   Number of wires:               1080
+   Number of wire bits:           1285
+   Number of public wires:           5
+   Number of public wire bits:     210
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               1149
+     $_ANDNOT_                     231
+     $_AND_                          1
+     $_MUX_                        143
+     $_NAND_                         3
+     $_NOR_                          1
+     $_NOT_                         18
+     $_ORNOT_                       24
+     $_OR_                         452
+     $_XNOR_                        34
+     $_XOR_                        242
+
+=== secded_enc ===
+
+   Number of wires:                264
+   Number of wire bits:            398
+   Number of public wires:           2
+   Number of public wire bits:     136
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                270
+     $_NOT_                          7
+     $_XNOR_                        23
+     $_XOR_                        240
+
+=== sram_ecc ===
+
+   Number of wires:              76933
+   Number of wire bits:         150208
+   Number of public wires:        1044
+   Number of public wire bits:   74248
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             149775
+     $_ANDNOT_                    1025
+     $_AND_                          4
+     $_DFFE_PP_                  73800
+     $_MUX_                      73738
+     $_NAND_                         4
+     $_NOR_                          1
+     $_NOT_                          2
+     $_ORNOT_                        8
+     $_OR_                        1108
+     $_SDFF_PN0_                    11
+     $_XOR_                         72
+     secded_dec                      1
+     secded_enc                      1
+
+=== design hierarchy ===
+
+   sram_ecc                          1
+     secded_dec                      1
+     secded_enc                      1
+
+   Number of wires:              78277
+   Number of wire bits:         151891
+   Number of public wires:        1051
+   Number of public wire bits:   74594
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             151192
+     $_ANDNOT_                    1256
+     $_AND_                          5
+     $_DFFE_PP_                  73800
+     $_MUX_                      73881
+     $_NAND_                         7
+     $_NOR_                          2
+     $_NOT_                         27
+     $_ORNOT_                       32
+     $_OR_                        1560
+     $_SDFF_PN0_                    11
+     $_XNOR_                        57
+     $_XOR_                        554
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_sram_ecc.sv passed], synthesis=ok, cells=1149, OVERALL PASS

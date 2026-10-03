@@ -1,0 +1,191 @@
+// SoC integration test: the testbench plays the RV64GC cluster, LPDDR4 controller and boot flash.
+// Secure boot -> CPU released -> SRAM -> DMA DDR->SRAM through IOPMP -> NPU GEMM fed by DMA ->
+// isolation violation -> decode error -> watchdog bark/bite -> tampered-boot rejection.
+module tb_soc_top;
+  localparam int R = 4, C = 4, D = 4;
+  logic clk = 0, por_n = 0;
+  logic [255:0] otp_digest;
+  logic [31:0]  otp_min_version = 32'd5;
+  logic cpu_rst_n, cpu_req = 0, cpu_we = 0, cpu_gnt, cpu_rvalid, cpu_err;
+  logic [31:0] cpu_addr = 0; logic [63:0] cpu_wdata = 0, cpu_rdata;
+  logic [7:0] irq;
+  logic ddr_req, ddr_we, ddr_gnt, ddr_rvalid; logic [31:0] ddr_addr; logic [63:0] ddr_wdata, ddr_rdata;
+  logic fl_req, fl_gnt, fl_rvalid, fl_err = 0; logic [31:0] fl_addr; logic [63:0] fl_rdata;
+  logic per_req, per_we, per_gnt, per_rvalid; logic [31:0] per_addr; logic [63:0] per_wdata, per_rdata;
+  logic [D-1:0] pwr_ack, pwr_en, iso_en, ret_save, dom_clk_en;
+  logic [11:0] temp = 12'd100;
+  logic sys_reset_req;
+  integer fails = 0, checks = 0;
+
+  soc_top #(.R(R), .C(C), .SRAM_DEPTH(1024), .D(D)) dut (.*);
+  always #5 clk = ~clk;
+
+  // ---- external models ----
+  logic [63:0] flash [64];
+  logic [63:0] ddr [8192];          // 64 KB at 0x8000_0000
+  // generated: stage-1 image (version 5, 20 words) and its SHA-256
+  localparam logic [255:0] IMG_DIGEST = 256'h62703a7f21350f35cee5123ee269ec9d57a7ad2856f80201b1fd05359149b5e9;
+  task automatic load_flash();
+      flash[0] = 64'h0000000500000014;
+      flash[1] = 64'hdda1494c73cf256d;
+      flash[2] = 64'hdb5b5fab8f4d3e27;
+      flash[3] = 64'hc7fde805ec99108d;
+      flash[4] = 64'h73ab48767734d7c1;
+      flash[5] = 64'hdae445508201e2bd;
+      flash[6] = 64'h309d6b79965eda32;
+      flash[7] = 64'hcdcc69292f45e678;
+      flash[8] = 64'h79cb9e86830c71c2;
+      flash[9] = 64'h9d2c67eda13ffe79;
+      flash[10] = 64'h2fa91425cb008853;
+      flash[11] = 64'h7253edc618187993;
+      flash[12] = 64'h244caf9c4dabb481;
+      flash[13] = 64'h89e7d15f17362f25;
+      flash[14] = 64'he3eff9c0cf44dd3f;
+      flash[15] = 64'ha26b7f62b1852f27;
+      flash[16] = 64'h986e86cb0ab8ab67;
+      flash[17] = 64'h656abd72fb710734;
+      flash[18] = 64'h73f778aaf6fa5db8;
+      flash[19] = 64'hbd299753a7677796;
+      flash[20] = 64'ha66b0d389d95847e;
+  endtask
+  logic gr;
+  always @(negedge clk) gr = ($urandom_range(0, 3) != 0);
+  assign fl_gnt = fl_req && gr;
+  always @(posedge clk) begin fl_rvalid <= fl_req && fl_gnt; fl_rdata <= flash[fl_addr[8:3]]; end
+  assign ddr_gnt = ddr_req && gr;
+  always @(posedge clk) begin
+    ddr_rvalid <= ddr_req && ddr_gnt;
+    ddr_rdata  <= ddr[ddr_addr[15:3]];
+    if (ddr_req && ddr_gnt && ddr_we) ddr[ddr_addr[15:3]] <= ddr_wdata;
+  end
+  assign per_gnt = per_req;
+  always @(posedge clk) begin per_rvalid <= per_req; per_rdata <= 64'hFEED_0000_0000_0000 | per_addr; end
+  logic [D-1:0] a1, a2;
+  always @(posedge clk) begin a1 <= pwr_en; a2 <= a1; end
+  assign pwr_ack = a2;
+
+  // ---- CPU bus model ----
+  task automatic chk(input bit ok, input string what);
+    checks++; if (!ok) begin fails++; $display("FAIL %s", what); end
+  endtask
+  task automatic bus(input logic we, input logic [31:0] a, input logic [63:0] wd, output logic [63:0] rd, output logic er);
+    cpu_req = 1; cpu_we = we; cpu_addr = a; cpu_wdata = wd;
+    @(posedge clk); while (!cpu_gnt) @(posedge clk);
+    #1 cpu_req = 0;
+    while (!cpu_rvalid) begin @(posedge clk); #1; end
+    rd = cpu_rdata; er = cpu_err;
+    @(negedge clk);
+  endtask
+  task automatic wr(input logic [31:0] a, input logic [63:0] d);
+    logic [63:0] x; logic e; bus(1, a, d, x, e);
+  endtask
+  task automatic rd(input logic [31:0] a, output logic [63:0] d);
+    logic e; bus(0, a, 0, d, e);
+  endtask
+
+  task automatic dma(input int src, input int dst, input int len, input int rows, input int ss, input int ds);
+    logic [63:0] s; int c;
+    wr(32'h3000_1000, 2); wr(32'h3000_1004, src); wr(32'h3000_1008, dst); wr(32'h3000_100C, len);
+    wr(32'h3000_1010, rows); wr(32'h3000_1014, ss); wr(32'h3000_1018, ds); wr(32'h3000_1000, 3);
+    c = 0; do begin rd(32'h3000_1000, s); c++; end while (!s[1] && c < 5000);
+  endtask
+
+  logic signed [7:0] A [8][16];
+  logic signed [7:0] W [16][8];
+
+  initial begin
+    logic [63:0] d, d2; logic e; int c;
+    load_flash();
+    otp_digest = IMG_DIGEST;
+    repeat (3) @(negedge clk); por_n = 1;
+    // ---- 1. secure boot ----
+    chk(cpu_rst_n === 1'b0, "CPUs held in reset at power-on");
+    c = 0; while (!cpu_rst_n && c < 5000) begin @(negedge clk); c++; end
+    chk(cpu_rst_n === 1'b1, "secure boot released the CPUs");
+    rd(32'h3000_6000, d); chk(d[1:0] == 2'b01, "SYS boot status ok");
+    rd(32'h3000_6020, d); chk(d[31:0] == IMG_DIGEST[255:224], "measured digest H0 readable");
+    rd(32'h0000_0008, d); chk(d == flash[1], "flash readable by CPU after boot");
+    bus(1, 32'h0000_0008, 64'h1, d, e); chk(e, "flash is read-only");
+    // ---- 2. SRAM ----
+    for (int i = 0; i < 16; i++) wr(32'h1000_0000 + i*8, {32'hC0DE0000 + i, 32'(i * 7)});
+    for (int i = 0; i < 16; i++) begin rd(32'h1000_0000 + i*8, d); chk(d == {32'hC0DE0000 + i, 32'(i * 7)}, "SRAM data"); end
+    // ---- 3. IOPMP + DMA: DDR -> SRAM 2-D copy ----
+    wr(32'h3000_2000, 32'h8000_0000); wr(32'h3000_2004, 32'h8001_0000); wr(32'h3000_2008, 4'b0011); // DDR read-only
+    wr(32'h3000_2010, 32'h1000_0000); wr(32'h3000_2014, 32'h1000_2000); wr(32'h3000_2018, 4'b0111); // SRAM rw
+    wr(32'h3000_2020, 32'h2000_0000); wr(32'h3000_2024, 32'h2040_0000); wr(32'h3000_2028, 4'b0111); // NPU rw
+    for (int i = 0; i < 8192; i++) ddr[i] = {$urandom, $urandom};
+    dma(32'h8000_0100, 32'h1000_0400, 4, 3, 64, 32);
+    rd(32'h3000_1000, d); chk(d[2:0] == 3'b010, "DMA DDR->SRAM done");
+    for (int r = 0; r < 3; r++) for (int i = 0; i < 4; i++) begin
+      rd(32'h1000_0400 + r*32 + i*8, d);
+      chk(d == ddr[(32'h100 + r*64 + i*8) >> 3], $sformatf("DMA 2-D copy r%0d i%0d", r, i));
+    end
+    // ---- 4. NPU GEMM (8 x 8 x 16, INT8 requant) with operands staged in DDR and moved by DMA ----
+    for (int i = 0; i < 8; i++) for (int k = 0; k < 16; k++) A[i][k] = $urandom;
+    for (int k = 0; k < 16; k++) for (int j = 0; j < 8; j++) W[k][j] = $urandom;
+    for (int mi = 0; mi < 2; mi++) for (int k = 0; k < 16; k++) begin
+      d = '0; for (int i = 0; i < R; i++) d[i*16 +: 16] = {{8{A[mi*R+i][k][7]}}, A[mi*R+i][k]};
+      ddr[(32'h1000 >> 3) + mi*16 + k] = d;
+    end
+    for (int nj = 0; nj < 2; nj++) for (int k = 0; k < 16; k++) begin
+      d = '0; for (int j = 0; j < C; j++) d[j*8 +: 8] = W[k][nj*C+j];
+      ddr[(32'h2000 >> 3) + nj*16 + k] = d;
+    end
+    dma(32'h8000_1000, 32'h2000_0000, 32, 1, 256, 256);   // -> ABUF
+    rd(32'h3000_1000, d); chk(d[2:0] == 3'b010, "DMA DDR->ABUF");
+    dma(32'h8000_2000, 32'h2010_0000, 32, 1, 256, 256);   // -> WBUF
+    rd(32'h3000_1000, d); chk(d[2:0] == 3'b010, "DMA DDR->WBUF");
+    wr(32'h3000_0004, 2); wr(32'h3000_0008, 2); wr(32'h3000_000C, 16); wr(32'h3000_0010, 3'b010);
+    wr(32'h3000_0014, 32'd300); wr(32'h3000_0018, 10); wr(32'h3000_001C, 32'(-3)); wr(32'h3000_0000, 1);
+    c = 0; do begin rd(32'h3000_0000, d); c++; end while (!d[1] && c < 5000);
+    chk(d[2:0] == 3'b010 && irq[1], "NPU done, interrupt raised");
+    for (int mi = 0; mi < 2; mi++) for (int nj = 0; nj < 2; nj++) for (int i = 0; i < R; i++) begin
+      int row;
+      row = (mi*2 + nj)*R + i;
+      rd(32'h2020_0000 + row*16, d); rd(32'h2020_0008 + row*16, d2);
+      for (int j = 0; j < C; j++) begin
+        logic signed [63:0] acc, y;
+        logic [63:0] half;
+        acc = 0;
+        for (int k = 0; k < 16; k++) acc += 64'(A[mi*R+i][k]) * 64'(W[k][nj*C+j]);
+        y = ((acc * 300) + (64'sd1 <<< 9)) >>> 10;
+        y = y - 3;
+        if (y > 127) y = 127; if (y < -128) y = -128;
+        half = (j < 2) ? d : d2;
+        chk($signed(half[(j % 2)*32 +: 32]) == y, $sformatf("NPU C[%0d][%0d]", mi*R+i, nj*C+j));
+      end
+    end
+    // the flash write in step 1 was the first fault: decode error (source 7) must be latched
+    rd(32'h3000_4008, d); chk(d[8] && d[7:0] == 7, "first fault = decode error from flash write");
+    wr(32'h3000_4000, 32'hFFFF); wr(32'h3000_4014, 1);    // clear status + first-fault latch
+    rd(32'h3000_4008, d); chk(!d[8], "first-fault latch cleared");
+    // ---- 5. isolation: DMA write into read-only DDR is blocked ----
+    d2 = ddr[0];
+    dma(32'h1000_0000, 32'h8000_0000, 1, 1, 8, 8);
+    rd(32'h3000_1000, d); chk(d[2] == 1'b1, "DMA write to read-only DDR rejected");
+    chk(ddr[0] == d2, "DDR word unchanged");
+    chk(irq[3], "IOPMP interrupt");
+    rd(32'h3000_4000, d); chk(d[2] && d[3], "err_agg logged IOPMP + DMA error");
+    rd(32'h3000_4008, d); chk(d[8] && d[7:0] == 2, "first fault = IOPMP (root cause)");
+    // ---- 6. decode error ----
+    bus(0, 32'h5000_0000, 0, d, e); chk(e, "unmapped address returns error");
+    rd(32'h3000_4000, d); chk(d[7], "decode error logged");
+    // ---- 7. peripheral window ----
+    rd(32'h4000_0010, d); chk(d == 64'hFEED_0000_4000_0010, "peripheral subsystem reachable");
+    // ---- 8. watchdog bark then bite -> reset request ----
+    wr(32'h3000_3004, 200); wr(32'h3000_3008, 200); wr(32'h3000_3000, 1);
+    repeat (230) @(negedge clk); chk(irq[4], "watchdog bark interrupt");
+    chk(!sys_reset_req, "no reset request after first expiry");
+    repeat (230) @(negedge clk); chk(sys_reset_req, "watchdog bite requests system reset");
+    rd(32'h3000_4000, d); chk(d[15], "bite logged in err_agg as fatal");
+    chk(irq[6], "fatal interrupt");
+    // ---- 9. tampered boot image: CPUs never released ----
+    flash[7] = flash[7] ^ 64'h100;
+    por_n = 0; repeat (3) @(negedge clk); por_n = 1;
+    c = 0; while (!irq[0] && c < 5000) begin @(negedge clk); c++; end
+    chk(irq[0] && !cpu_rst_n, "tampered image: boot_fail, CPUs stay in reset");
+    $display("%0d checks, %0d failures", checks, fails);
+    if (fails == 0) $display("ALL TESTS PASSED"); else $display("TESTS FAILED");
+    $finish;
+  end
+endmodule
