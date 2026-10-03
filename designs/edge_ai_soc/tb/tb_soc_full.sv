@@ -38,6 +38,18 @@ module tb_soc_full;
   always @(posedge clk) pa <= pwr_en;
   assign pwr_ack = pa;
 
+  // trace: CPU-port transactions (first 300), LPDDR4 ready, errors
+  int ntr = 0;
+  always @(posedge clk) begin
+    if (dut.cpu_req && dut.cpu_gnt && ntr < 300) begin
+      $display("%0t CPU %s %h %h", $time, dut.cpu_we ? "WR" : "RD", dut.cpu_addr, dut.cpu_wdata); ntr++;
+    end
+    if (dut.cpu_rvalid && dut.cpu_err && ntr < 300) begin $display("%0t CPU ERR response", $time); ntr++; end
+  end
+  always begin #2000; $display("heartbeat t=%0t", $time); $fflush; end
+  always @(posedge ddr_ready) $display("%0t LPDDR4 ready (trained)", $time);
+  always @(posedge dut.cpu_rst_n) $display("%0t CPUs released by secure boot", $time);
+
   task automatic chk(input bit ok, input string what);
     checks++; if (!ok) begin fails++; $display("FAIL %s", what); end
   endtask
@@ -52,15 +64,25 @@ module tb_soc_full;
     return ecc_data(dut.u_soc.u_sram.mem[byte_off >> 3]);
   endfunction
 
+  // results sampled by a clocked process (keeps the main thread to plain clock waits)
+  logic done_flag = 0;
+  int   cyc = 0;
+  always @(posedge clk) begin
+    cyc <= cyc + 1;
+    done_flag <= (ecc_data(dut.u_soc.u_sram.mem[32'h110 >> 3]) == 64'h600D);
+  end
+
   initial begin
-    int fd, c;
+    int fd, c, t0;
     $readmemh("flash.hex", flash);
     fd = $fopen("flash.digest", "r"); void'($fscanf(fd, "%h", otp_digest)); $fclose(fd);
     for (int l = 0; l < 8; l++) eye_lo[l*6 +: 6] = 6'(8 + 3 * l);
     repeat (5) @(negedge clk); por_n = 1;
-    c = 0; while (!dut.cpu_rst_n && c < 20000) begin @(negedge clk); c++; end
-    chk(dut.cpu_rst_n, $sformatf("secure boot verified the image and released the CPUs after %0d cycles", c));
-    c = 0; while (sram(32'h110) != 64'h600D && c < 400000) begin @(negedge clk); c++; end
+    repeat (20000) begin @(negedge clk); if (dut.cpu_rst_n) break; end
+    chk(dut.cpu_rst_n, $sformatf("secure boot verified the image and released the CPUs at cycle %0d", cyc));
+    t0 = cyc;
+    repeat (60000) begin @(negedge clk); if (done_flag) break; end
+    c = cyc - t0;
     repeat (2000) @(negedge clk);
     chk(ddr_ready, "LPDDR4 initialised and trained");
     chk(sram(32'h100) == 64'h123, $sformatf("hart0 SRAM store (%h)", sram(32'h100)));

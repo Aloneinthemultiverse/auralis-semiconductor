@@ -86,7 +86,7 @@ Fault sources: 0 ECC corrected, 1 ECC uncorrectable (fatal), 2 IOPMP, 3 DMA erro
 | PCIe data link layer (seq, LCRC, ACK/NAK, replay) | `phy/pcie_dll.sv` | clean and 0.5 % corrupted link: all TLPs in order, exactly once | PASS 0.90 |
 | USB 3.0 link layer (HP CRC, LGOOD/LBAD/LCRD, retry, credits) | `phy/usb3_link.sv` | clean and lossy link: all HPs in order, once | PASS 0.91 |
 | StrongARM comparator (receiver sampler), transistor level | `analog/strongarm.sp` (SKY130, ngspice) | 24/24 decisions tt/ss/ff, 0.5-50 mV, worst 338 ps < 500 ps at 1 GHz, 118-147 fJ | PASS 0.85 |
-| Full chip: secure boot -> 4 CVA6 run the verified image -> LPDDR4 -> DMA -> atomics | `rtl/soc_full.sv`, `tb/tb_soc_full.sv`, `cpu/sw/firmware.py` | see below | |
+| **Full chip**: secure boot -> 4 CVA6 run the verified image from flash -> LPDDR4 (trained PHY) store/load -> CPU-programmed IOPMP + DMA LPDDR4->SRAM -> atomics | `rtl/soc_full.sv`, `tb/tb_soc_full.sv`, `cpu/sw/firmware.py` | **9/9** (Verilator), 0 DRAM timing violations | PASS 0.91 |
 
 Bugs found by the loop in round 2 (all fixed): per-core atomics adapters lost AMO updates across
 cores (one shared adapter after the core merge); byte stores from different cores raced in the
