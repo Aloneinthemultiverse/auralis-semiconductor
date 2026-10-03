@@ -1,9 +1,9 @@
 // R x C systolic array of npu_pe with built-in input skew and output de-skew.
 // 64x64 at 1 GHz = 4096 MAC/cycle = 8.19 TOPS (INT8).
 // mode 0 (WS): load weights with w_load (rows shifted in from the top, last row first, R cycles),
-//              then stream A rows: a_row = A[m][0..R-1]; c_row = (A*W)[m][0..C-1] after R+C cycles.
+//              then stream A rows: a_row = A[m][0..R-1]; c_row = (A*W)[m][0..C-1] after R+C+1 cycles.
 // mode 1 (OS): stream k = 0..K-1: a_row = A[0..R-1][k], w_row = W[k][0..C-1], os_first on k = 0;
-//              acc_flat[(i*C+j)*32 +: 32] = C[i][j], valid R+C-1 cycles after the last k (incl. the PE pipeline stage).
+//              acc_flat[(i*C+j)*32 +: 32] = C[i][j], valid R+C cycles after the last k (incl. the PE pipeline stages).
 module npu_array #(parameter int R = 2, parameter int C = 2) (
   input  logic              clk,
   input  logic              rst_n,
@@ -84,10 +84,10 @@ module npu_array #(parameter int R = 2, parameter int C = 2) (
     end
   endgenerate
 
-  // valid pipeline (R + C cycles: R + C - 1 skew + 1 PE pipeline stage)
-  logic [R+C-1:0] vpipe;
+  // valid pipeline (R + C + 1 cycles: R + C - 1 skew + 2 PE pipeline stages)
+  logic [R+C:0] vpipe;
   always_ff @(posedge clk)
     if (!rst_n) vpipe <= '0;
-    else if (en) vpipe <= {vpipe[R+C-2:0], a_valid & ~mode};
-  assign c_valid = vpipe[R+C-1];
+    else if (en) vpipe <= {vpipe[R+C-1:0], a_valid & ~mode};
+  assign c_valid = vpipe[R+C];
 endmodule

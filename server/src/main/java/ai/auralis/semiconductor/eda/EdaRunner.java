@@ -42,7 +42,9 @@ public class EdaRunner {
     }
 
     public Result run(Map<String, String> files, String script) {
-        Path dir = workRoot.resolve(UUID.randomUUID().toString());
+        String id = UUID.randomUUID().toString();
+        Path dir = workRoot.resolve(id);
+        String name = "auralis-eda-" + id;
         try {
             Files.createDirectories(dir);
             for (var f : files.entrySet()) {
@@ -53,12 +55,13 @@ public class EdaRunner {
                 Files.createDirectories(target.getParent());
                 Files.writeString(target, f.getValue(), StandardCharsets.UTF_8);
             }
-            Process p = new ProcessBuilder(List.of("docker", "run", "--rm", "--network", "none",
+            Process p = new ProcessBuilder(List.of("docker", "run", "--rm", "--name", name, "--network", "none",
                     "--memory", "2g", "--cpus", "2", "-v", dir.toAbsolutePath() + ":/work",
                     "-w", "/work", image, "sh", "-c", script))
                     .redirectErrorStream(true).start();
             if (!p.waitFor(timeout.toSeconds(), TimeUnit.SECONDS)) {
                 p.destroyForcibly();
+                killContainer(name);   // killing the docker CLI does not stop the container
                 return new Result(124, "timed out after " + timeout.toSeconds() + "s");
             }
             String out = new String(p.getInputStream().readAllBytes(), StandardCharsets.UTF_8).strip();
@@ -78,6 +81,16 @@ public class EdaRunner {
             } catch (IOException ignored) {
                 // best-effort temp cleanup
             }
+        }
+    }
+
+    private static void killContainer(String name) {
+        try {
+            new ProcessBuilder("docker", "kill", name).redirectErrorStream(true).start().waitFor(30, TimeUnit.SECONDS);
+        } catch (IOException ignored) {
+            // container may already be gone
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
     }
 }

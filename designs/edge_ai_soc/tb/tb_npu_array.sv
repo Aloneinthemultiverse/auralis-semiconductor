@@ -71,7 +71,7 @@ module tb_npu_array;
       @(negedge clk);
     end
     os_first = 0; a_row = '0; w_row = '0;
-    repeat (R + C - 1) @(negedge clk);   // R+C-2 fill/drain + 1 PE pipeline stage
+    repeat (R + C) @(negedge clk);       // R+C-2 fill/drain + 2 PE pipeline stages
     for (int i = 0; i < R; i++) for (int j = 0; j < C; j++) begin
       ref_c = 0;
       for (int k = 0; k < K; k++) ref_c += 32'(A[i][k]) * 32'(W[k][j]);

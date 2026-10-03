@@ -8,7 +8,7 @@ module tb_npu_pe;
   logic [31:0] psum_out;
   integer fails = 0, checks = 0;
   logic [7:0] ws;
-  logic signed [31:0] acc_ref;
+  logic signed [31:0] acc_ref, prev_ref;
 
   npu_pe dut(.clk(clk), .rst_n(rst_n), .en(en), .mode(mode), .prec16(prec16), .w_load(w_load),
              .clear_acc(clear_acc), .a_in(a_in), .w_in(w_in), .psum_in(psum_in),
@@ -40,7 +40,7 @@ module tb_npu_pe;
       @(negedge clk);
       w_load = 0; ws = w_in;
       a_in = $urandom; psum_in = $urandom; w_in = $urandom;
-      @(negedge clk); @(negedge clk);   // 2-stage pipeline: inputs held, result after 2 cycles
+      @(negedge clk); @(negedge clk); @(negedge clk);   // 3-stage pipeline: inputs held, result after 3 cycles
       check(psum_out, psum_in + mul(a_in, ws, prec16), 1);
     end
     // Output-stationary: weights stream in, 16-term dot products accumulate locally.
@@ -49,17 +49,18 @@ module tb_npu_pe;
       for (int k = 0; k < 16; k++) begin
         a_in = $urandom; w_in = $urandom; clear_acc = (k == 0);
         @(negedge clk);
-        if (k > 0) check(psum_out, acc_ref, 2);       // result of step k-1 (one cycle behind)
+        if (k > 1) check(psum_out, prev_ref, 2);      // result of step k-2 (two cycles behind)
+        prev_ref = acc_ref;
         acc_ref = (k == 0 ? 32'sd0 : acc_ref) + mul(a_in, w_in, prec16);
       end
       a_in = 0; clear_acc = 0;                         // drain: adds 0
-      @(negedge clk);
+      @(negedge clk); @(negedge clk);
       check(psum_out, acc_ref, 2);
     end
     clear_acc = 0;
     // Extremes: most negative INT16 x most negative INT8.
     mode = 1; prec16 = 1; a_in = 16'h8000; w_in = 8'h80; clear_acc = 1;
-    @(negedge clk); @(negedge clk);
+    @(negedge clk); @(negedge clk); @(negedge clk);
     check(psum_out, 32'sd4194304, 3);
     // Systolic pass-through of activation and weight.
     clear_acc = 0; a_in = 16'hBEEF; w_in = 8'h5A;

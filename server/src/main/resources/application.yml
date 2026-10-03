@@ -20,7 +20,7 @@ spring:
           mcp-endpoint: /mcp
 semiconductor:
   eda-image: auralis-eda
-  timeout: 180s
+  timeout: 600s
 management:
   endpoints:
     web:

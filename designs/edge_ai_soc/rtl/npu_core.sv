@@ -149,7 +149,7 @@ module npu_core #(parameter int R = 4, parameter int C = 4, parameter int ADEPTH
       case (st)
         S_STREAM: if (k + 1 == kk) begin streaming <= 1'b0; st <= S_DRAIN; dcnt <= '0; end
                   else k <= k + 1;
-        S_DRAIN:  if (dcnt == 8'(R + C)) begin cap <= acc_flat; st <= S_WRITE; i_row <= '0; end  // + PE pipeline stage
+        S_DRAIN:  if (dcnt == 8'(R + C + 1)) begin cap <= acc_flat; st <= S_WRITE; i_row <= '0; end  // + PE pipeline stages
                   else dcnt <= dcnt + 1;
         S_WRITE:  if (i_row + 1 == 16'(R)) begin
                     tiles <= tiles + 1;
