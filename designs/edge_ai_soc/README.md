@@ -73,6 +73,50 @@ Bugs that the loop found and fixed:
 Fault sources: 0 ECC corrected, 1 ECC uncorrectable (fatal), 2 IOPMP, 3 DMA error, 4 WDT bark,
 5 boot fail, 6 power-domain error, 7 decode error, 15 WDT bite (fatal).
 
+## Added in round 2: CPUs, memory interface, interface PHYs, physical design, analog
+
+| Block | Files | Result | Laya |
+|---|---|---|---|
+| NPU PE v4: 3-stage pipeline + operand isolation | `rtl/npu_pe.sv` | 804 checks (+ array 384, NPU 479, SoC 118) | PASS 0.87 |
+| 4 x CVA6 RV64GC Sv39 cluster | `cpu/cpu_cluster.sv`, `cpu/axi2sbus.sv`, `cpu/cv64a6_auralis_config_pkg.sv` | Verilator: 4 harts boot from cached LPDDR4, `amoadd.d` atomic across harts, racing byte stores kept: 7/7 | PASS 0.94 |
+| LPDDR4 controller + PHY digital | `phy/lpddr4_ctrl.sv`, `phy/lpddr4_phy.sv`, `phy/lpddr4_dram_model.sv` | per-lane read-DQ training, 763/763, 0 timing violations | PASS |
+| SerDes PCS: 8b/10b + link training, 64b/66b, 128b/130b | `phy/codec8b10b.sv` (generated, property-checked), `phy/pcs.sv` | 3,265/3,265 | PASS 0.87 |
+| MIPI CSI-2 RX (4-lane D-PHY align, ECC, CRC) | `phy/mipi_csi2_rx.sv` | 10/10 | PASS 0.84 |
+| Ethernet MAC | `phy/eth_mac.sv` | 94/94 | PASS 0.93 |
+| PCIe data link layer (seq, LCRC, ACK/NAK, replay) | `phy/pcie_dll.sv` | clean and 0.5 % corrupted link: all TLPs in order, exactly once | PASS 0.90 |
+| USB 3.0 link layer (HP CRC, LGOOD/LBAD/LCRD, retry, credits) | `phy/usb3_link.sv` | clean and lossy link: all HPs in order, once | PASS 0.91 |
+| StrongARM comparator (receiver sampler), transistor level | `analog/strongarm.sp` (SKY130, ngspice) | 24/24 decisions tt/ss/ff, 0.5-50 mV, worst 338 ps < 500 ps at 1 GHz, 118-147 fJ | PASS 0.85 |
+| Full chip: secure boot -> 4 CVA6 run the verified image -> LPDDR4 -> DMA -> atomics | `rtl/soc_full.sv`, `tb/tb_soc_full.sv`, `cpu/sw/firmware.py` | see below | |
+
+Bugs found by the loop in round 2 (all fixed): per-core atomics adapters lost AMO updates across
+cores (one shared adapter after the core merge); byte stores from different cores raced in the
+bridge's read-modify-write (bus lock); 32-bit MMIO registers 4 bytes apart were mis-addressed by the
+64-bit bridge (MMIO byte-lane path); LPDDR4 back-to-back writes cut off the previous BL16 burst;
+PCIe DLL dropped a TLP arriving while the previous one drained (delivery FIFO) and lost counter
+updates with several writers per cycle; the EDA server leaked containers on timeout.
+
+### Physical design (OpenROAD, open Nangate45 45 nm kit) and measured power
+
+| PE version | Area | Worst slack at 1 GHz | Power (gate-level VCD, 50 % zero activations) |
+|---|---|---|---|
+| v2 pipelined | 2,906 um2 | -0.10 ns | 3.42 mW |
+| v3 register enables | 3,129 um2 | -0.07 ns | 3.64 mW (+6 %) |
+| **v4 operand isolation** | 3,052 um2 | **+0.02 ns (met)** | **3.20 mW (-6.4 %)** |
+
+Method note: annotating an RTL VCD only reached the 119 ports (internal activity was guessed) and
+gave wrong answers; the numbers above come from gate-level simulation of each routed netlist with
+cell models generated from the Liberty file (`pnr/lib2v.py`), ~6,000 pins annotated.
+Scaled to 28 nm: ~1,150 um2 and ~1.35 mW per PE -> 64 x 64 array ~4.7 mm2, ~5.5 W at 100 % load.
+**The < 3 W average target therefore needs <= ~40 % average NPU utilisation** (PMU auto-idle /
+throttle), or further reduction (clock-gate insertion, lower Vdd at 28 nm).
+
+## Still behavioural / not done
+
+- Analog front ends other than the sampler: TX drivers, CTLE/DFE, CDR, PLL/DLL, D-PHY LP/HS.
+  Behavioural models only; no free 28 nm PDK for silicon-accurate design (SKY130 used as a proxy).
+- PCIe transaction layer and configuration space, USB 3.0 protocol layer, 10G Ethernet XGMII adaptation.
+- Full-chip physical design (only the PE was placed and routed).
+
 ## Integration IP (connected through ports, not generated)
 
 | Function | Suggested free/open IP | Port in `soc_top` |

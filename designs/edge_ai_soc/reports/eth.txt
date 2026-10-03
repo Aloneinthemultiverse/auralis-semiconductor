@@ -1,0 +1,40 @@
+Top module: eth_mac_rx
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_eth.sv (Icarus) ==
+94 checks, 0 failures
+ALL TESTS PASSED
+tb_eth.sv:63: $finish called at 34660 (1s)
+
+== synthesize (Yosys) ==
+Warning: Replacing memory \dl with list of registers. See eth_mac.sv:104
+
+4. Printing statistics.
+
+=== eth_mac_rx ===
+
+   Number of wires:                281
+   Number of wire bits:            446
+   Number of public wires:          17
+   Number of public wire bits:     122
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:                403
+     $_ANDNOT_                      27
+     $_AND_                          5
+     $_MUX_                          1
+     $_NAND_                        23
+     $_NOT_                         11
+     $_ORNOT_                        9
+     $_OR_                          70
+     $_SDFFE_PN0P_                  75
+     $_SDFFE_PN1P_                  32
+     $_SDFF_PN0_                     3
+     $_SDFF_PP0_                     1
+     $_XNOR_                        26
+     $_XOR_                        120
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_eth.sv passed], synthesis=ok, cells=403, OVERALL PASS

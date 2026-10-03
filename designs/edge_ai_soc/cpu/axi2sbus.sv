@@ -3,6 +3,9 @@
 // The SoC bus has no byte strobes: a partial write (strb != 'hFF) is a read-modify-write.
 // AW is served before AR when both are pending; responses are SLVERR on bus errors.
 // Atomics (ATOP) must be resolved upstream (axi_riscv_atomics) - this bridge sees plain AXI.
+// MMIO windows (registers 0x3xxx_xxxx, peripherals 0x4xxx_xxxx, CLINT 0x02xx_xxxx, PLIC 0x0Cxx_xxxx) hold
+// 32-bit registers 4 bytes apart: there the exact byte address is passed, write data is moved down to
+// bits [31:0] and read data back up to its AXI byte lane, and narrow writes are never read-modify-write.
 module axi2sbus #(parameter int IW = 4, parameter int AW = 64) (
   input  logic          clk,
   input  logic          rst_n,
@@ -60,6 +63,8 @@ module axi2sbus #(parameter int IW = 4, parameter int AW = 64) (
   logic          wl, err, waiting;
   logic [63:0]   rd_q;
   logic          wl_rmw;   // current WRITE completes an RMW
+  logic          mmio;
+  assign mmio = (addr[31:28] == 4'h3) || (addr[31:28] == 4'h4) || (addr[31:24] == 8'h02) || (addr[31:24] == 8'h0C);
 
   // next beat address (AXI burst rules; 64-bit bus)
   function automatic logic [AW-1:0] next_addr(input logic [AW-1:0] a, input logic [2:0] sz,
@@ -96,7 +101,7 @@ module axi2sbus #(parameter int IW = 4, parameter int AW = 64) (
         WDATA:
           if (w_valid) begin
             wd <= w_data; ws <= w_strb; wl <= w_last; waiting <= 1'b0; wl_rmw <= 1'b0;
-            st <= (w_strb == 8'hFF) ? WRITE : (w_strb == 8'h00 ? WRITE : RMW_RD);
+            st <= (w_strb == 8'hFF || w_strb == 8'h00 || mmio) ? WRITE : RMW_RD;
           end
         RMW_RD:
           if (!waiting) begin
@@ -126,7 +131,7 @@ module axi2sbus #(parameter int IW = 4, parameter int AW = 64) (
             if (m_gnt) waiting <= 1'b1;
           end else if (m_rvalid) begin
             waiting <= 1'b0;
-            rd_q <= m_rdata;
+            rd_q <= mmio ? (m_rdata << (8 * addr[2:0])) : m_rdata;
             if (m_err) err <= 1'b1;
             st <= RDATA;
           end
@@ -146,8 +151,8 @@ module axi2sbus #(parameter int IW = 4, parameter int AW = 64) (
   assign m_lock   = (st == RMW_RD) || (st == WRITE && wl_rmw);
   assign m_req    = !waiting && (st == RMW_RD || st == READ || (st == WRITE && ws != 8'h00));
   assign m_we     = (st == WRITE);
-  assign m_addr   = {addr[31:3], 3'b000};
-  assign m_wdata  = wd;
+  assign m_addr   = mmio ? addr[31:0] : {addr[31:3], 3'b000};
+  assign m_wdata  = mmio ? (wd >> (8 * addr[2:0])) : wd;
   assign b_valid  = (st == BRESP);
   assign b_id     = id;
   assign b_resp   = err ? 2'b10 : 2'b00;

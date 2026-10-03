@@ -8,3 +8,6 @@ designs/edge_ai_soc/pnr/*/out/
 third_party/cva6/
 designs/edge_ai_soc/pnr/*.vcd
 designs/edge_ai_soc/pnr/ng45.lib
+designs/edge_ai_soc/obj_full/
+designs/edge_ai_soc/build_full.log
+designs/edge_ai_soc/cpu/build.log

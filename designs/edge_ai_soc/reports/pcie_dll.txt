@@ -1,0 +1,44 @@
+Top module: pcie_dll
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_pcie_dll.sv (Icarus) ==
+5 checks, 0 failures
+ALL TESTS PASSED
+tb_pcie_dll.sv:73: $finish called at 373980 (1s)
+
+== synthesize (Yosys) ==
+Warning: Replacing memory \x_dllp with list of registers. See pcie_dll.sv:98
+
+4. Printing statistics.
+
+=== pcie_dll ===
+
+   Number of wires:             114023
+   Number of wire bits:         118878
+   Number of public wires:         634
+   Number of public wire bits:    5297
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:             118744
+     $_ANDNOT_                    9301
+     $_AND_                        153
+     $_DFFE_PP_                   5008
+     $_DFF_P_                        7
+     $_MUX_                      79490
+     $_NAND_                       208
+     $_NOR_                        172
+     $_NOT_                        325
+     $_ORNOT_                      567
+     $_OR_                       17824
+     $_SDFFE_PN0N_                  16
+     $_SDFFE_PN0P_                 107
+     $_SDFFE_PN1P_                  60
+     $_SDFF_PN0_                    78
+     $_SDFF_PN1_                     1
+     $_XNOR_                       371
+     $_XOR_                       5056
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_pcie_dll.sv passed], synthesis=ok, cells=118744, OVERALL PASS

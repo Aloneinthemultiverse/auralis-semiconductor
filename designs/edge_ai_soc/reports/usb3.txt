@@ -1,0 +1,42 @@
+Top module: usb3_link
+
+== lint (Verilator) ==
+LINT CLEAN
+
+== simulate tb_usb3.sv (Icarus) ==
+5 checks, 0 failures
+ALL TESTS PASSED
+tb_usb3.sv:60: $finish called at 381370 (1s)
+
+== synthesize (Yosys) ==
+4. Printing statistics.
+
+=== usb3_link ===
+
+   Number of wires:               2440
+   Number of wire bits:           3637
+   Number of public wires:          58
+   Number of public wire bits:    1070
+   Number of memories:               0
+   Number of memory bits:            0
+   Number of processes:              0
+   Number of cells:               3338
+     $_ANDNOT_                     279
+     $_AND_                         58
+     $_DFFE_PP_                    671
+     $_DFF_P_                        6
+     $_MUX_                        931
+     $_NAND_                        55
+     $_NOR_                         51
+     $_NOT_                         56
+     $_ORNOT_                      151
+     $_OR_                         168
+     $_SDFFE_PN0P_                 174
+     $_SDFFE_PN1P_                  16
+     $_SDFF_PN0_                    57
+     $_SDFF_PN1_                     2
+     $_SDFF_PP0_                     1
+     $_XNOR_                       116
+     $_XOR_                        546
+
+SUMMARY: lint=clean, simulation=1/1 passed [tb_usb3.sv passed], synthesis=ok, cells=3338, OVERALL PASS

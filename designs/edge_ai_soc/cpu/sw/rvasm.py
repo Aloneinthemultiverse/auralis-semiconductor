@@ -16,3 +16,23 @@ def csrr(rd, csr): return i(0x73, rd, 2, "x0", csr)
 def amoadd_d(rd, rs2, rs1): return r(0x2F, rd, 3, rs1, rs2, 0)          # funct5=0, aq=rl=0
 def fence(): return 0x0FF0000F
 def jal(rd, off): return ((off >> 20 & 1) << 31) | ((off >> 1 & 0x3FF) << 21) | ((off >> 11 & 1) << 20) | ((off >> 12 & 0xFF) << 12) | (R[rd] << 7) | 0x6F
+def sw(rs2, imm, rs1): return s(0x23, 2, rs1, rs2, imm)
+def lw(rd, imm, rs1): return i(0x03, rd, 2, rs1, imm)
+def andi(rd, rs1, imm): return i(0x13, rd, 7, rs1, imm)
+def br(f3, rs1, rs2, off):
+    return (((off >> 12) & 1) << 31) | (((off >> 5) & 0x3F) << 25) | (R[rs2] << 20) | (R[rs1] << 15) | (f3 << 12) | (((off >> 1) & 0xF) << 8) | (((off >> 11) & 1) << 7) | 0x63
+def beq(a, b, off): return br(0, a, b, off)
+def bne(a, b, off): return br(1, a, b, off)
+
+def assemble(items):
+    """items: instruction words, label strings, or callables(label_offsets, pc) -> word."""
+    labels, pc = {}, 0
+    for it in items:
+        if isinstance(it, str): labels[it] = pc
+        else: pc += 4
+    out, pc = [], 0
+    for it in items:
+        if isinstance(it, str): continue
+        out.append(it(labels, pc) if callable(it) else it)
+        pc += 4
+    return out
