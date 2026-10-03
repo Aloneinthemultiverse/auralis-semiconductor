@@ -4,35 +4,35 @@ Top module: npu_pe
 LINT CLEAN
 
 == simulate tb_npu_pe.sv (Icarus) ==
-npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
-npu_pe.sv:27: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:31: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
+npu_pe.sv:31: sorry: constant selects in always_* processes are not currently supported (all bits will be included).
 PASS all 844 checks (WS INT8/INT16, OS dot products, extremes, pass-through, enable)
 ALL TESTS PASSED
-tb_npu_pe.sv:76: $finish called at 10450 (1s)
+tb_npu_pe.sv:79: $finish called at 12860 (1s)
 
 == synthesize (Yosys) ==
 4. Printing statistics.
 
 === npu_pe ===
 
-   Number of wires:               1335
-   Number of wire bits:           1587
-   Number of public wires:          17
-   Number of public wire bits:     207
+   Number of wires:               1310
+   Number of wire bits:           1593
+   Number of public wires:          20
+   Number of public wire bits:     241
    Number of memories:               0
    Number of memory bits:            0
    Number of processes:              0
-   Number of cells:               1444
-     $_ANDNOT_                     423
-     $_AND_                         68
+   Number of cells:               1466
+     $_ANDNOT_                     393
+     $_AND_                         84
      $_MUX_                         48
-     $_NAND_                        68
-     $_NOR_                        102
-     $_NOT_                         28
-     $_ORNOT_                       40
-     $_OR_                         183
-     $_SDFFE_PN0P_                  96
-     $_XNOR_                        98
-     $_XOR_                        290
+     $_NAND_                        88
+     $_NOR_                        139
+     $_NOT_                         25
+     $_ORNOT_                       12
+     $_OR_                         168
+     $_SDFFE_PN0P_                 122
+     $_XNOR_                       148
+     $_XOR_                        239
 
-SUMMARY: lint=clean, simulation=1/1 passed [tb_npu_pe.sv passed], synthesis=ok, cells=1444, OVERALL PASS
+SUMMARY: lint=clean, simulation=1/1 passed [tb_npu_pe.sv passed], synthesis=ok, cells=1466, OVERALL PASS

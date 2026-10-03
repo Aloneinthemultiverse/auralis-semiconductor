@@ -40,7 +40,7 @@ module tb_npu_pe;
       @(negedge clk);
       w_load = 0; ws = w_in;
       a_in = $urandom; psum_in = $urandom; w_in = $urandom;
-      @(negedge clk);
+      @(negedge clk); @(negedge clk);   // 2-stage pipeline: inputs held, result after 2 cycles
       check(psum_out, psum_in + mul(a_in, ws, prec16), 1);
     end
     // Output-stationary: weights stream in, 16-term dot products accumulate locally.
@@ -49,14 +49,17 @@ module tb_npu_pe;
       for (int k = 0; k < 16; k++) begin
         a_in = $urandom; w_in = $urandom; clear_acc = (k == 0);
         @(negedge clk);
+        if (k > 0) check(psum_out, acc_ref, 2);       // result of step k-1 (one cycle behind)
         acc_ref = (k == 0 ? 32'sd0 : acc_ref) + mul(a_in, w_in, prec16);
-        check(psum_out, acc_ref, 2);
       end
+      a_in = 0; clear_acc = 0;                         // drain: adds 0
+      @(negedge clk);
+      check(psum_out, acc_ref, 2);
     end
     clear_acc = 0;
     // Extremes: most negative INT16 x most negative INT8.
     mode = 1; prec16 = 1; a_in = 16'h8000; w_in = 8'h80; clear_acc = 1;
-    @(negedge clk);
+    @(negedge clk); @(negedge clk);
     check(psum_out, 32'sd4194304, 3);
     // Systolic pass-through of activation and weight.
     clear_acc = 0; a_in = 16'hBEEF; w_in = 8'h5A;

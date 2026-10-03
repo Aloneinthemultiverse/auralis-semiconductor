@@ -3,3 +3,6 @@ knowledge/cache/
 *.log
 .idea/
 .vscode/
+designs/edge_ai_soc/cpu/obj/
+designs/edge_ai_soc/pnr/*/out/
+third_party/cva6/
