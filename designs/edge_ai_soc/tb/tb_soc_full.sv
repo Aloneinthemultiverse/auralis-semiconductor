@@ -61,7 +61,7 @@ module tb_soc_full;
     for (int p = 1; p < 72; p++) if ((p & (p - 1)) != 0) begin ecc_data[k] = cw[p]; k++; end
   endfunction
   function automatic logic [63:0] sram(input int byte_off);
-    return ecc_data(dut.u_soc.u_sram.mem[byte_off >> 3]);
+    return ecc_data(dut.u_soc.u_sram.u_mem.mem[byte_off >> 3]);
   endfunction
 
   // results sampled by a clocked process (keeps the main thread to plain clock waits)
@@ -69,7 +69,7 @@ module tb_soc_full;
   int   cyc = 0;
   always @(posedge clk) begin
     cyc <= cyc + 1;
-    done_flag <= (ecc_data(dut.u_soc.u_sram.mem[32'h110 >> 3]) == 64'h600D);
+    done_flag <= (ecc_data(dut.u_soc.u_sram.u_mem.mem[32'h110 >> 3]) == 64'h600D);
   end
 
   initial begin

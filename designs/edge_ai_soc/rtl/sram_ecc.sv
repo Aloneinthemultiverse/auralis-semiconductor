@@ -17,20 +17,27 @@ module sram_ecc #(parameter int DEPTH = 1024, parameter int AW = $clog2(DEPTH)) 
   output logic          err_uncorr,
   output logic [AW-1:0] err_addr
 );
-  logic [71:0] mem [DEPTH];
   logic [71:0] enc, raw, fixed;
   logic [63:0] dec;
   logic        c1, u1;
   logic [AW-1:0] raddr;
   logic        rd;
 
+  // storage through the foundry-mappable RAM wrapper: writes (host or scrub of a corrected word), reads
+  logic          m_we;
+  logic [AW-1:0] m_wa;
+  logic [71:0]   m_wd;
+  assign m_we = (req && we) || (rd && c1);
+  assign m_wa = (req && we) ? addr : raddr;
+  assign m_wd = (req && we) ? (enc ^ inj_mask) : fixed;
+  ram_1r1w #(.W(72), .D(DEPTH)) u_mem (.clk(clk), .we(m_we), .waddr(m_wa), .wdata(m_wd),
+                                       .re(req && !we), .raddr(addr), .rdata(raw));
+
   secded_enc u_enc (.d(wdata), .cw(enc));
   secded_dec u_dec (.cw(raw), .d(dec), .cw_fixed(fixed), .corrected(c1), .uncorrectable(u1));
 
   always_ff @(posedge clk) begin
-    if (req && we) mem[addr] <= enc ^ inj_mask;
-    else if (rd && c1) mem[raddr] <= fixed;      // scrub corrected word
-    if (req && !we) raw <= mem[addr];
+
   end
 
   always_ff @(posedge clk) begin
